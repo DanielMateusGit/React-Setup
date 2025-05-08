@@ -1,6 +1,6 @@
 # React Vite Setup Script
 
-This script helps you create, run, and manage a Dockerized React project with Vite.js.
+These scripts are used to create, run, and manage Dockerized React projects that are ready to use and preconfigured with popular technologies like Vite, Tailwind CSS, Heroicons, Headless UI, and more.
 
 ## Prerequisites
 
