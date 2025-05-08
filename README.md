@@ -1,4 +1,4 @@
-# React Vite Setup Script
+# React Setup
 
 These scripts are used to create, run, and manage Dockerized React projects that are ready to use and preconfigured with popular technologies like Vite, Tailwind CSS, Heroicons, Headless UI, and more.
 
