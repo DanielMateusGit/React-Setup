@@ -19,6 +19,7 @@ What can you do?
   → Run the React project inside a Docker container for development
   → Open an interactive terminal for a running Docker container
   → Stop and remove containers, networks, and volumes for the project
+  → Install additional functionality into an existing app
   → Show this help message
 
 Commands:
@@ -27,6 +28,7 @@ Commands:
   ./react-vite-setup.sh run <app-name>                        
   ./react-vite-setup.sh terminal <container-name>             
   ./react-vite-setup.sh cleanup <app-name>                    
+  ./react-vite-setup.sh install <dependency-name> in <app-name>    
   ./react-vite-setup.sh --help     
 
 EOF
@@ -212,11 +214,66 @@ cleanup() {
   log "All Docker resources and project files have been cleaned up."
 }
 
+# Install dependencies
+install() {
+  local deps_dir="./deps"
+  local dependency_name=$1
+  local keyword=$2
+  local app_name=$3
+  local dependency_file="$deps_dir/$dependency_name.sh"
+
+  # Validate input arguments
+  if [ -z "$dependency_name" ] || [ "$keyword" != "in" ] || [ -z "$app_name" ]; then
+    error "Invalid syntax. Usage: ./react-vite-setup.sh install <dependency-name> in <app-name>"
+    exit 1
+  fi
+
+  # Validate the app directory
+  if [ ! -d "$app_name" ]; then
+    error "Project directory '$app_name' does not exist."
+    exit 1
+  fi
+
+  # Validate the dependencies directory
+  if [ ! -d "$deps_dir" ]; then
+    error "Dependencies directory '$deps_dir' does not exist."
+    exit 1
+  fi
+
+  # Validate the dependency file
+  if [ ! -f "$dependency_file" ]; then
+    error "Dependency file '$dependency_file' does not exist."
+    exit 1
+  fi
+
+  # Source the dependency file
+  log "Sourcing dependency file: $dependency_file"
+  source "$dependency_file"
+
+  # Check if the function exists in the sourced file
+  if declare -f "$dependency_name" > /dev/null; then
+    log "Executing function '$dependency_name' from '$dependency_file'..."
+    "$dependency_name" "$app_name"  # Call the function and pass the app name
+  else
+    error "Function '$dependency_name' not found in the dependency file."
+    exit 1
+  fi
+}
+
 # Parse arguments to allow --help and similar formats
 case "$1" in
   create|run|terminal|cleanup)
     check_os
     "$1" "${@:2}" || help
+    ;;
+  install)
+    if [ "$2" ] && [ "$3" == "in" ] && [ "$4" ]; then
+      check_os
+      install "$2" "$3" "$4"
+    else
+      error "Invalid syntax. Usage: ./react-vite-setup.sh install <dependency-name> in <app-name>"
+      exit 1
+    fi
     ;;
   --help|-h)
     help
