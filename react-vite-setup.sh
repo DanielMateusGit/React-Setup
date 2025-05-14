@@ -24,7 +24,7 @@ What can you do?
 
 Commands:
 
-  ./react-vite-setup.sh create <app-name> [template] [port]   
+  ./react-vite-setup.sh create <app-name> [port]   
   ./react-vite-setup.sh run <app-name>                        
   ./react-vite-setup.sh terminal <container-name>             
   ./react-vite-setup.sh cleanup <app-name>                    
@@ -83,19 +83,24 @@ create() {
 
   log "Creating a new React project: $app_name"
 
-  # Create the Vite project
+  # Create the Vite project with the React template
   log "Running Vite project creation command..."
-  docker run --rm -v "$PWD":/app -w /app node:18 npm create vite@latest "$app_name" -- --template react
+  docker run --rm -v "$PWD":/app -w /app node:latest npx create-vite@latest "$app_name" --template react --no-interactive
 
   # Navigate to the project directory
-  cd "$app_name" || exit
-  log "Navigated to project directory: $app_name"
+  if [ -d "$app_name" ]; then
+    cd "$app_name" || exit
+    log "Navigated to project directory: $app_name"
+  else
+    error "Failed to create project directory '$app_name'."
+    exit 1
+  fi
 
   # Add Dockerfile
   log "Creating Dockerfile..."
   cat <<EOF > Dockerfile
 # Use the official Node.js image
-FROM node:18
+FROM node:latest
 
 # Set the working directory inside the container
 WORKDIR /app
