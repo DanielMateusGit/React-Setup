@@ -26,7 +26,7 @@ Commands:
 
   ./react-vite-setup.sh create <app-name> [port]   
   ./react-vite-setup.sh run <app-name>                        
-  ./react-vite-setup.sh terminal <container-name>             
+  ./react-vite-setup.sh terminal <app-name>             
   ./react-vite-setup.sh cleanup <app-name>                    
   ./react-vite-setup.sh install <dependency-name> in <app-name>    
   ./react-vite-setup.sh --help     
@@ -127,6 +127,7 @@ EOF
 
 services:
   react-app:
+    container_name: ${app_name}
     build:
       context: .
       dockerfile: Dockerfile
