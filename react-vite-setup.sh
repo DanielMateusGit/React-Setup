@@ -85,7 +85,7 @@ create() {
 
   # Create the Vite project with the React template
   log "Running Vite project creation command..."
-  docker run --rm -v "$PWD":/app -w /app node:latest npx create-vite@latest "$app_name" --template react --no-interactive
+  docker run --rm -v "$PWD":/app -w /app node:latest npx create-vite@latest "$app_name" --template react-ts --no-interactive
 
   # Navigate to the project directory
   if [ -d "$app_name" ]; then
